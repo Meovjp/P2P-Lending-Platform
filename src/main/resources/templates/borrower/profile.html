@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container mt-4">
+        <h3>Hồ sơ vay vốn</h3>
+        <p>Cập nhật thông tin cá nhân của bạn để hệ thống đánh giá rủi ro.
+            <br/>
+            <strong class="text-danger">Lưu ý:</strong> Mỗi khi cập nhật, lãi suất sẽ bị reset và Admin sẽ duyệt lại.
+        </p>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <div class="row">
+            <div class="col-md-7">
+                <form th:action="@{/profile}" th:object="${profileDto}" method="post" class="card shadow-sm">
+                    <div class="card-header">
+                        Thông tin cá nhân
+                    </div>
+                    <div class="card-body">
+                        <input type="hidden" th:field="*{userId}" />
+                        <input type="hidden" th:field="*{username}" />
+
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Họ và tên</label>
+                            <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dateOfBirth" class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-control" id="dateOfBirth" th:field="*{dateOfBirth}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="monthlyIncome" class="form-label">Thu nhập hàng tháng (VND)</label>
+                            <input type="number" class="form-control" id="monthlyIncome" th:field="*{monthlyIncome}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dtiRatio" class="form-label">Tỷ lệ Nợ/Thu nhập (DTI)</label>
+                            <input type="number" step="0.01" class="form-control" id="dtiRatio" th:field="*{dtiRatio}" required>
+                            <div class="form-text">Ví dụ: 0.3 (tức 30%)</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Lưu và Cập nhật</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header">
+                        Trạng thái phê duyệt
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Kết quả đánh giá</h5>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Hạng rủi ro</strong>
+                                <span th:if="${profileDto.riskCategory}" th:text="${profileDto.riskCategory}" class="badge bg-info fs-6">A</span>
+                                <span th:unless="${profileDto.riskCategory}" class="text-muted">Chưa có</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <strong>Lãi suất được duyệt</strong>
+                                <span th:if="${profileDto.interestRate}" th:text="${profileDto.interestRate} + ' %'" class="badge bg-success fs-6">10.5 %</span>
+                                <span th:unless="${profileDto.interestRate}" class="badge bg-warning fs-6">Chờ Admin gán</span>
+                            </li>
+                        </ul>
+                        
+                        <hr/>
+                        
+                        <a th:if="${profileDto.interestRate}" th:href="@{/loan/request}" class="btn btn-success w-100">
+                            Tạo Yêu cầu Vay ngay
+                        </a>
+                        <div th:unless="${profileDto.interestRate}" class="alert alert-warning small">
+                            Bạn chỉ có thể tạo yêu cầu vay sau khi Admin gán lãi suất.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

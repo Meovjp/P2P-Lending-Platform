@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container mt-4">
+        <h3>Lịch trả nợ của tôi</h3>
+        <p>Danh sách các khoản cần thanh toán định kỳ cho các khoản vay ĐÃ ĐƯỢC GIẢI NGÂN.</p>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>Mã khoản vay</th>
+                        <th>Hạn trả</th>
+                        <th>Số tiền (VND)</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${schedules}">
+                        <td>
+                            <span class="badge bg-secondary" th:text="'LOAN-' + ${item.loanId}"></span>
+                        </td>
+                        <td th:text="${#temporals.format(item.dueDate, 'dd-MM-yyyy')}"></td>
+                        
+                        <td th:text="${#numbers.formatDecimal(item.amountDue, 0, 'COMMA', 0, 'POINT')}"></td>
+                        
+                        <td>
+                            <span th:text="${item.status}"
+                                  th:classappend="${item.status.name() == 'DUE' ? 'text-bg-warning' : 
+                                                   (item.status.name() == 'PAID' ? 'text-bg-success' : 'text-bg-danger')}"
+                                  class="badge">
+                            </span>
+                        </td>
+                        <td>
+                            <form th:if="${item.status.name() != 'PAID'}" 
+                                  th:action="@{/loan/repay/{id}(id=${item.id})}" 
+                                  method="post">
+                                <button type="submit" class="btn btn-primary btn-sm" 
+                                        onclick="return confirm('Bạn có chắc muốn thanh toán khoản này?');">
+                                    Thanh toán
+                                </button>
+                            </form>
+                            <span th:if="${item.status.name() == 'PAID'}" class="text-success fw-bold">
+                                Đã thanh toán
+                            </span>
+                        </td>
+                    </tr>
+                    
+                    <tr th:if="${schedules == null or schedules.isEmpty()}">
+                        <td colspan="5" class="text-center text-muted">Bạn không có khoản nợ nào cần trả (hoặc chưa có khoản vay nào được giải ngân).</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

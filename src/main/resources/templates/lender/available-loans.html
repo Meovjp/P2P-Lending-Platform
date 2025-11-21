@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container mt-4">
+        <h3>Các khoản vay kêu gọi vốn</h3>
+        <p>Đây là các khoản vay đã được Admin phê duyệt (Status: APPROVED) và đang chờ nhà đầu tư.</p>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">V</div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Số tiền (VND)</th>
+                        <th>Kỳ hạn</th>
+                        <th>Lãi suất</th>
+                        <th>Hạng rủi ro (Borrower)</th>
+                        <th>Mục đích</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="loan : ${availableLoans}">
+                        <td th:text="${#numbers.formatDecimal(loan.amount, 0, 'COMMA', 0, 'POINT')}"></td>
+                        <td th:text="${loan.termMonths} + ' tháng'"></td>
+                        <td th:text="${loan.interestRate} + ' %'"></td>
+                        <td>
+                            <span class_A"badge bg-info" th:text="${loan.borrower.borrowerProfile.riskCategory}"></span>
+                        </td>
+                        <td th:text="${loan.purpose}"></td>
+                        <td>
+                            <form th:action="@{/invest/{loanId}(loanId=${loan.loanId})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-success btn-sm">Đầu tư</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${availableLoans == null or availableLoans.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted">Hiện không có khoản vay nào kêu gọi vốn.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

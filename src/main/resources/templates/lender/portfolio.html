@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container mt-4">
+        <h3>Danh mục đầu tư của tôi</h3>
+        <p>Theo dõi dòng tiền và hiệu quả các khoản vay mà bạn đã tài trợ.</p>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-striped align-middle">
+                    <thead>
+                    <tr>
+                        <th>Ngày đầu tư</th>
+                        <th>Mã khoản vay</th>
+                        <th>Người vay (Rủi ro)</th>
+                        <th>Số tiền đầu tư (VND)</th>
+                        <th>Lãi suất (%)</th>
+                        <th>Trạng thái khoản vay</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="inv : ${investments}">
+                        <td th:text="${#temporals.format(inv.investedAt, 'dd-MM-yyyy HH:mm')}"></td>
+                        
+                        <td>
+                            <span class="badge bg-secondary" th:text="'LOAN-' + ${inv.loan.loanId}"></span>
+                        </td>
+                        
+                        <td>
+                            <span class="badge bg-info" 
+                                  th:text="${inv.loan.borrower.borrowerProfile.riskCategory}">
+                            </span>
+                        </td>
+                        
+                        <td th:text="${#numbers.formatDecimal(inv.amount, 0, 'COMMA', 0, 'POINT')}"></td>
+                        
+                        <td th:text="${inv.loan.interestRate} + ' %'"></td>
+                        
+                        <td>
+                            <span th:text="${inv.loan.status}" 
+                                  th:classappend="${inv.loan.status.name() == 'COMPLETED' ? 'text-bg-success' : 
+                                                   (inv.loan.status.name() == 'DEFAULTED' ? 'text-bg-danger' : 'text-bg-primary')}"
+                                  class="badge">
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr th:if="${investments == null or investments.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted">Bạn chưa đầu tư vào khoản vay nào.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

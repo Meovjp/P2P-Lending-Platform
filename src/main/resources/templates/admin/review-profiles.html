@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container mt-4">
+        <h3>Hồ sơ chờ gán lãi suất</h3>
+        <p>Các hồ sơ này đã được cập nhật bởi người vay và đang chờ bạn gán lãi suất.</p>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID Người vay</th>
+                        <th>Họ tên</th>
+                        <th>Thu nhập (VND)</th>
+                        <th>DTI</th>
+                        <th>Hạng rủi ro</th>
+                        <th>Gán lãi suất (%)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="profile : ${profiles}">
+                        <td th:text="${profile.user.userId}"></td>
+                        <td th:text="${profile.fullName}"></td>
+                        <td th:text="${#numbers.formatDecimal(profile.monthlyIncome, 0, 'COMMA', 0, 'POINT')}"></td>
+                        <td th:text="${profile.dtiRatio}"></td>
+                        <td><span class="badge bg-info" th:text="${profile.riskCategory}"></span></td>
+                        <td>
+                            <form th:action="@{/admin/profiles/{userId}/assign-rate(userId=${profile.user.userId})}" method="post" class="d-flex">
+                                <input type="number" step="0.1" name="interestRate" class="form-control form-control-sm me-2" style="width: 100px;" required>
+                                <button type="submit" class="btn btn-primary btn-sm">Gán</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${profiles == null or profiles.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted">Không có hồ sơ nào chờ duyệt.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

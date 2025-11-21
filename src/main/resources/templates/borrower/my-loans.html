@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+	<div th:replace="~{fragments :: navbar}"></div>
+
+	<div class="container mt-4">
+		<h3>Danh sách Khoản vay</h3>
+
+		<div class="mb-3">
+			<a th:href="@{/loan/request}" class="btn btn-primary">Tạo Yêu cầu
+				Vay mới</a>
+		</div>
+
+		<div th:if="${successMessage}" class="alert alert-success"
+			th:text="${successMessage}"></div>
+
+		<div class="card shadow-sm">
+			<div class="card-body">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>Ngày tạo</th>
+							<th>Số tiền (VND)</th>
+							<th>Kỳ hạn</th>
+							<th>Lãi suất</th>
+							<th>Mục đích</th>
+							<th>Trạng thái</th>
+							<th>Hành động</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="loan : ${loanRequests}">
+							<td
+								th:text="${#temporals.format(loan.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+							<td
+								th:text="${#numbers.formatDecimal(loan.amount, 0, 'COMMA', 0, 'POINT')}"></td>
+							<td th:text="${loan.termMonths} + ' tháng'"></td>
+							<td th:text="${loan.interestRate} + ' %'"></td>
+							<td th:text="${loan.purpose}"></td>
+							<td><span th:text="${loan.status}"
+								th:classappend="${loan.status.name() == 'PENDING' ? 'text-bg-warning' : 
+                                                   (loan.status.name() == 'REJECTED' ? 'text-bg-danger' : 
+                                                   (loan.status.name() == 'APPROVED' ? 'text-bg-info' : 
+                                                   (loan.status.name() == 'FUNDED' ? 'text-bg-success' : 'text-bg-secondary')))}"
+								class="badge"> </span></td>
+							<td><a
+								th:if="${loan.status.name() == 'FUNDED' or loan.status.name() == 'COMPLETED'}"
+								th:href="@{/loan/{id}/schedule(id=${loan.loanId})}"
+								class="btn btn-info btn-sm text-white"> Xem Lịch Trả Nợ </a> <span
+								th:if="${loan.status.name() == 'PENDING'}"
+								class="text-muted small">Chờ duyệt</span></td>
+						</tr>
+
+						<tr th:if="${loanRequests == null or loanRequests.isEmpty()}">
+							<td colspan="6" class="text-center text-muted">Bạn chưa có
+								yêu cầu vay nào.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:fragment="header(pageTitle)">
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle} + ' - P2P Lending'"></title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navbar">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/dashboard}">P2P Lending</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                </li>
+
+                <li class="nav-item dropdown" sec:authorize="hasRole('BORROWER')">
+                    <a class="nav-link dropdown-toggle" href="#" id="borrowerMenu" role="button" data-bs-toggle="dropdown">
+                        Vay vốn
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" th:href="@{/profile}">Hồ sơ của tôi</a></li>
+                        <li><a class="dropdown-item" th:href="@{/loan/my-requests}">Khoản vay của tôi</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/loan/repayments}">Lịch trả nợ</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item dropdown" sec:authorize="hasRole('LENDER')">
+                    <a class="nav-link dropdown-toggle" href="#" id="lenderMenu" role="button" data-bs-toggle="dropdown">
+                        Đầu tư
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" th:href="@{/invest/available}">Cơ hội đầu tư</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/invest/portfolio}">Danh mục của tôi</a></li>
+                    </ul>
+                </li>
+                
+                <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link dropdown-toggle" href="#" id="adminMenu" role="button" data-bs-toggle="dropdown">
+                        Quản trị
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="adminMenu">
+                        <li><a class="dropdown-item" th:href="@{/admin/profiles/review}">Duyệt Hồ sơ (Gán lãi suất)</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/loans/pending}">Duyệt Khoản vay</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <form class="d-flex" th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+                <span class="navbar-text text-white me-3">
+                    Chào, <strong sec:authentication="name">User</strong>!
+                </span>
+                <button class="btn btn-outline-light" type="submit">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div th:fragment="footer-scripts">
+    <script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</div>
+
+</body>
+</html>

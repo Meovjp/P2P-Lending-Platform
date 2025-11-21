@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle} ?: 'P2P Lending'"></title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.2/css/bootstrap.min.css}" />
+    </head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/dashboard}">P2P Lending</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                </li>
+
+                <li class="nav-item dropdown" sec:authorize="hasRole('BORROWER')">
+                    <a class="nav-link dropdown-toggle" href="#" id="borrowerMenu" role="button" data-bs-toggle="dropdown">
+                        Vay vốn
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark">
+                        <li><a class="dropdown-item" th:href="@{/profile}">Hồ sơ của tôi</a></li>
+                        <li><a class="dropdown-item" th:href="@{/loan/my-requests}">Khoản vay của tôi</a></li>
+                    </ul>
+                </li>
+
+                <li class="nav-item" sec:authorize="hasRole('LENDER')">
+                    <a class="nav-link" href="#">Đầu tư</a>
+                </li>
+                
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" href="#">Quản trị</a>
+                </li>
+            </ul>
+
+            <form class="d-flex" th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
+                <span class="navbar-text text-white me-3">
+                    Chào, <strong sec:authentication="name">User</strong>!
+                </span>
+                <button class="btn btn-outline-light" type="submit">Đăng xuất</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <th:block th:fragment="content">
+        </th:block>
+</div>
+
+<script th:src="@{/webjars/bootstrap/5.3.2/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

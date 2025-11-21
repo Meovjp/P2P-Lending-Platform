@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form th:action="@{/loan/request}" th:object="${loanRequestDto}" method="post" class="card shadow-sm">
+                    <div class="card-header">
+                        <h3>Tạo Yêu cầu Vay mới</h3>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="alert alert-info">
+                            Lãi suất áp dụng cho bạn (đã được Admin duyệt) là: 
+                            <strong th:text="${approvedRate} + ' %'"></strong>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Số tiền cần vay (VND)</label>
+                            <input type="number" class="form-control" id="amount" th:field="*{amount}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="termMonths" class="form-label">Kỳ hạn (Tháng)</label>
+                            <input type="number" class="form-control" id="termMonths" th:field="*{termMonths}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="purpose" class="form-label">Mục đích vay</label>
+                            <textarea class="form-control" id="purpose" th:field="*{purpose}" rows="3"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Gửi Yêu cầu</button>
+                        <a th:href="@{/dashboard}" class="btn btn-secondary">Hủy bỏ</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container mt-4">
+        <h1>Chào mừng đến với Dashboard</h1>
+        <p>Bạn đã đăng nhập thành công với tư cách là <strong th:text="${username ?: 'User'}"></strong>.</p>
+        
+        <p>Vai trò của bạn: <strong sec:authentication="principal.authorities"></strong></p>
+
+        <hr>
+        
+        <div sec:authorize="hasRole('BORROWER')">
+            <h3>Hành động (Borrower)</h3>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a th:href="@{/profile}">Quản lý Hồ sơ vay vốn</a>
+                </li>
+                <li class="list-group-item">
+                    <a th:href="@{/loan/my-requests}">Xem các khoản vay của tôi</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

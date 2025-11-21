@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+<body>
+<div th:replace="~{fragments :: navbar}"></div>
+
+<div class="container mt-4">
+    <h3>Lịch trả nợ khoản vay</h3>
+    
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Kỳ thứ</th>
+                    <th>Ngày đến hạn</th>
+                    <th>Số tiền (VND)</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item, iterStat : ${schedules}">
+                    <td th:text="${iterStat.count}"></td>
+                    <td th:text="${item.dueDate}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.amountDue, 0, 'COMMA', 0, 'POINT')}"></td>
+                    <td>
+                        <span th:if="${item.status.name() == 'PAID'}" class="badge bg-success">Đã trả</span>
+                        <span th:if="${item.status.name() == 'DUE'}" class="badge bg-warning text-dark">Chưa trả</span>
+                        <span th:if="${item.status.name() == 'LATE'}" class="badge bg-danger">Trễ hạn</span>
+                    </td>
+                    <td>
+                        <div sec:authorize="hasRole('BORROWER')" th:if="${item.status.name() == 'DUE'}">
+                            <form th:action="@{/repayment/{id}/pay(id=${item.id})}" method="post">
+                                <button type="submit" class="btn btn-primary btn-sm" 
+                                        onclick="return confirm('Bạn có chắc chắn muốn thanh toán kỳ này? Tiền sẽ được trừ từ ví của bạn.')">
+                                    Thanh toán
+                                </button>
+                            </form>
+                        </div>
+                        <span th:if="${item.status.name() == 'PAID'}" class="text-muted small" 
+                              th:text="'Ngày trả: ' + ${item.paidDate}"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="mt-3">
+        <a th:href="@{/loan/my-requests}" class="btn btn-secondary">Quay lại danh sách</a>
+    </div>
+</div>
+
+<div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>

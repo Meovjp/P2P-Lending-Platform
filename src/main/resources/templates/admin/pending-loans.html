@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments :: header(pageTitle=${pageTitle})}"></head>
+
+<body>
+    <div th:replace="~{fragments :: navbar}"></div>
+
+    <div class="container mt-4">
+        <h3>Khoản vay chờ duyệt</h3>
+        <p>Các khoản vay đã được người vay tạo và đang chờ bạn phê duyệt.</p>
+
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Người vay</th>
+                        <th>Số tiền (VND)</th>
+                        <th>Kỳ hạn</th>
+                        <th>Lãi suất</th>
+                        <th>Mục đích</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="loan : ${pendingLoans}">
+                        <td th:text="${loan.borrower.username}"></td>
+                        <td th:text="${#numbers.formatDecimal(loan.amount, 0, 'COMMA', 0, 'POINT')}"></td>
+                        <td th:text="${loan.termMonths} + ' tháng'"></td>
+                        <td th:text="${loan.interestRate} + ' %'"></td>
+                        <td th:text="${loan.purpose}"></td>
+                        <td>
+                            <form th:action="@{/admin/loans/{loanId}/approve(loanId=${loan.loanId})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-success btn-sm">Duyệt</button>
+                            </form>
+                            <form th:action="@{/admin/loans/{loanId}/reject(loanId=${loan.loanId})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm">Từ chối</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${pendingLoans == null or pendingLoans.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted">Không có khoản vay nào chờ duyệt.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: footer-scripts}"></div>
+</body>
+</html>
